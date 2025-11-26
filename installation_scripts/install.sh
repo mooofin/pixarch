@@ -155,7 +155,11 @@ if [ "$DRY_RUN" != true ] && [ "$(id -u)" -eq 0 ]; then
   exit 1
 fi
 
-mkdir -p "$TMPDIR" "$AUR_DIR"
+if [ "$DRY_RUN" = true ]; then
+  log "DRY-RUN: mkdir -p \"$TMPDIR\" \"$AUR_DIR\""
+else
+  mkdir -p "$TMPDIR" "$AUR_DIR"
+fi
 
 log "DOTDIR=$DOTDIR"
 log "Home=$HOME_DIR"
@@ -204,7 +208,11 @@ fi
 
 # Link common configs (backing up any existing)
 log "Linking config files"
-mkdir -p "${HOME_DIR}/.config"
+if [ "$DRY_RUN" = true ]; then
+  log "DRY-RUN: mkdir -p \"${HOME_DIR}/.config\""
+else
+  mkdir -p "${HOME_DIR}/.config"
+fi
 backup_and_link "$DOTDIR/config/alacritty" "${HOME_DIR}/.config/alacritty"
 backup_and_link "$DOTDIR/config/lf" "${HOME_DIR}/.config/lf"
 backup_and_link "$DOTDIR/config/picom" "${HOME_DIR}/.config/picom"
@@ -230,7 +238,11 @@ if ask_yes_no "Copy GRUB theme and SDDM theme to system locations and update con
     if [ -f "$DOTDIR/installation_scripts/theme.conf" ]; then
       run_cmd sudo cp "$DOTDIR/installation_scripts/theme.conf" /etc/sddm.conf
     fi
-    run_cmd sudo systemctl enable --now sddm || log "Failed enabling sddm"
+    if [ "$DRY_RUN" = true ]; then
+      log "DRY-RUN: sudo systemctl enable --now sddm"
+    else
+      sudo systemctl enable --now sddm || log "Failed enabling sddm"
+    fi
   fi
 else
   log "Skipping theme installation"
