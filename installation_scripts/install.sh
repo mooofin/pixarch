@@ -378,6 +378,7 @@ if [ "$DRY_RUN" != true ] && [ "$(id -u)" -eq 0 ]; then
   exit 1
 fi
 
+<<<<<<< HEAD
 # Initialize log file
 mkdir -p "$(dirname "$LOG_FILE")" 2>/dev/null || true
 echo "=== Pixarch Installation Log ===" > "$LOG_FILE"
@@ -412,6 +413,13 @@ for cmd in "${REQUIRED_CMDS[@]}"; do
 done
 
 mkdir -p "$TMPDIR" "$AUR_DIR"
+=======
+if [ "$DRY_RUN" = true ]; then
+  log "DRY-RUN: mkdir -p \"$TMPDIR\" \"$AUR_DIR\""
+else
+  mkdir -p "$TMPDIR" "$AUR_DIR"
+fi
+>>>>>>> cfc8d168534ed17395d708b5c1cbaf3d635cfaed
 
 log_info "DOTDIR=$DOTDIR"
 log_info "Home=$HOME_DIR"
@@ -503,8 +511,17 @@ else
 fi
 
 # Link common configs (backing up any existing)
+<<<<<<< HEAD
 step_start "Linking configuration files"
 mkdir -p "${HOME_DIR}/.config"
+=======
+log "Linking config files"
+if [ "$DRY_RUN" = true ]; then
+  log "DRY-RUN: mkdir -p \"${HOME_DIR}/.config\""
+else
+  mkdir -p "${HOME_DIR}/.config"
+fi
+>>>>>>> cfc8d168534ed17395d708b5c1cbaf3d635cfaed
 backup_and_link "$DOTDIR/config/alacritty" "${HOME_DIR}/.config/alacritty"
 backup_and_link "$DOTDIR/config/lf" "${HOME_DIR}/.config/lf"
 backup_and_link "$DOTDIR/config/picom" "${HOME_DIR}/.config/picom"
@@ -555,8 +572,16 @@ if [ "$SKIP_THEMES" != true ]; then
         log_error "Failed to copy SDDM theme"
       fi
     fi
+<<<<<<< HEAD
   else
     log_info "Skipping themes (user declined)"
+=======
+    if [ "$DRY_RUN" = true ]; then
+      log "DRY-RUN: sudo systemctl enable --now sddm"
+    else
+      sudo systemctl enable --now sddm || log "Failed enabling sddm"
+    fi
+>>>>>>> cfc8d168534ed17395d708b5c1cbaf3d635cfaed
   fi
 else
   log_info "Skipping themes (--skip-themes)"
